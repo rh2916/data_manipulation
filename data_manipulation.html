@@ -402,6 +402,59 @@ pups_data = janitor::clean_names(pups_data)</code></pre>
 ## # ... with 46 more rows, and 2 more variables: pups_dead_birth &lt;int&gt;,
 ## #   pups_survive &lt;int&gt;</code></pre>
 </div>
+<div id="piping" class="section level2">
+<h2>Piping!!</h2>
+<pre class="r"><code>litters_data_raw = read_csv(&quot;./data/FAS_litters.csv&quot;,
+  col_types = &quot;ccddiiii&quot;)
+litters_data_clean_names = janitor::clean_names(litters_data_raw)
+litters_data_selected_cols = select(litters_data_clean_names, -pups_survive)
+litters_data_with_vars = mutate(litters_data_selected_cols, 
+  wt_gain = gd18_weight - gd0_weight,
+  group = tolower(group))
+litters_data_with_vars</code></pre>
+<pre><code>## # A tibble: 49 x 8
+##   group litter_number gd0_weight gd18_weight gd_of_birth pups_born_alive
+##   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;       &lt;dbl&gt;       &lt;int&gt;           &lt;int&gt;
+## 1 con7  #85                 19.7        34.7          20               3
+## 2 con7  #1/2/95/2           27          42            19               8
+## 3 con7  #5/5/3/83/3-3       26          41.4          19               6
+## # ... with 46 more rows, and 2 more variables: pups_dead_birth &lt;int&gt;,
+## #   wt_gain &lt;dbl&gt;</code></pre>
+<p>Use nested function calls:</p>
+<pre class="r"><code>litters_data_clean = 
+  mutate(
+    select(
+      janitor::clean_names(
+        read_csv(&quot;./data/FAS_litters.csv&quot;, col_types = &quot;ccddiiii&quot;)
+        ), 
+    -pups_survive
+    ),
+  wt_gain = gd18_weight - gd0_weight,
+  group = tolower(group)
+  )
+litters_data_clean</code></pre>
+<pre><code>## # A tibble: 49 x 8
+##   group litter_number gd0_weight gd18_weight gd_of_birth pups_born_alive
+##   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;       &lt;dbl&gt;       &lt;int&gt;           &lt;int&gt;
+## 1 con7  #85                 19.7        34.7          20               3
+## 2 con7  #1/2/95/2           27          42            19               8
+## 3 con7  #5/5/3/83/3-3       26          41.4          19               6
+## # ... with 46 more rows, and 2 more variables: pups_dead_birth &lt;int&gt;,
+## #   wt_gain &lt;dbl&gt;</code></pre>
+<p>Use piping</p>
+<pre class="r"><code>litters_data = 
+  read_csv(&quot;./data/FAS_litters.csv&quot;, col_types = &quot;ccddiiii&quot;) %&gt;%
+  janitor::clean_names(dat = .) %&gt;%
+  select(.data = ., -pups_survive) %&gt;%
+  mutate(.data = .,
+    wt_gain = gd18_weight - gd0_weight,
+    group = tolower(group))%&gt;%
+lm(gd18_weight ~ gd0_weight, data = .)</code></pre>
+</div>
+<div id="illustration" class="section level2">
+<h2>Illustration</h2>
+<p>. represent the data from above R assume that position is a data frame and will search above like runif(n = 20) same as runif(20) because R assume the first number is n</p>
+</div>
 
 
 

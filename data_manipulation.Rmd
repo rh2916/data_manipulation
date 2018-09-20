@@ -32,9 +32,30 @@ rename(litters_data, gest_day_0_weight = gd0_weight)
 ```
 ```{r}
 select(litters_data, starts_with("gd"))
-rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
+select(litters_data, litter_number, starts_with("pup"))
 select(litters_data, litter_number, everything())
 ```
+
+## Filter Observation
+
+Do some filtering!
+
+```{r}
+filter(litters_data, gd0_weight < 25)
+filter(litters_data, gd0_weight >= 25)
+
+filter(litters_data, pups_born_alive == 8)
+filter(litters_data, is.na(gd0_weight))
+
+filter(litters_data, group == "Low8" | group == "Low7")
+filter(litters_data, group %in% c("Con7", "Con8"))
+
+filter(litters_data, pups_born_alive %in% 4:6)
+filter(litters_data, pups_born_alive %in% 4:7, !is.na(gd0_weight))
+```
+
+
+
 
 
 
